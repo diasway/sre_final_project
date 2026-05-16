@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: shop-sre-api
+  namespace: sre-prr
+  labels:
+    release: sre-monitoring
+spec:
+  selector:
+    matchLabels:
+      app: shop-sre-api
+  namespaceSelector:
+    matchNames:
+      - sre-prr
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+      scrapeTimeout: 5s

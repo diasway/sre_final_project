@@ -1,0 +1,17 @@
+# For Minikube or Docker Desktop Kubernetes, keep the kubeconfig path default.
+kubeconfig_path = "~/.kube/config"
+kube_context    = null
+
+app_namespace        = "sre-prr"
+monitoring_namespace = "monitoring"
+
+# Local demo image:
+image_repository = "shop-sre-api"
+image_tag        = "local"
+
+# For GitHub Container Registry, use this pattern after publishing the image:
+# image_repository = "ghcr.io/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY/shop-sre-api"
+# image_tag        = "latest"
+
+replicas     = 2
+failure_rate = "0.01"

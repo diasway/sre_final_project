@@ -1,0 +1,31 @@
+services:
+  shop-sre-api:
+    build: .
+    image: shop-sre-api:local
+    ports:
+      - "8000:8000"
+    environment:
+      APP_VERSION: "1.0.0-local"
+      FAILURE_RATE: "0.02"
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - shop-sre-api
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: sre-capstone-admin
+    volumes:
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./docs/grafana/sre-dashboard.json:/var/lib/grafana/dashboards/sre-dashboard.json:ro
+    depends_on:
+      - prometheus

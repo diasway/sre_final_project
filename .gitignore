@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform/state/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfvars
+
+# Local files
+.env
+.DS_Store
+*.log
+
+# Evidence screenshots to be inserted manually
+screenshots/raw/

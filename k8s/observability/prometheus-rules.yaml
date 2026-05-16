@@ -1,0 +1,50 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: shop-sre-api-alerts
+  namespace: sre-prr
+  labels:
+    release: sre-monitoring
+spec:
+  groups:
+    - name: shop-sre-api.rules
+      rules:
+        - alert: ShopApiHighErrorRate
+          expr: |
+            (
+              sum(rate(http_requests_total{namespace="sre-prr", status=~"5.."}[5m]))
+              /
+              clamp_min(sum(rate(http_requests_total{namespace="sre-prr"}[5m])), 1)
+            ) > 0.05
+          for: 2m
+          labels:
+            severity: warning
+            service: shop-sre-api
+          annotations:
+            summary: "High 5xx error rate for shop-sre-api"
+            description: "More than 5% of requests are failing for at least 2 minutes."
+
+        - alert: ShopApiHighLatencyP95
+          expr: |
+            histogram_quantile(
+              0.95,
+              sum(rate(http_request_duration_seconds_bucket{namespace="sre-prr"}[5m])) by (le)
+            ) > 0.3
+          for: 3m
+          labels:
+            severity: warning
+            service: shop-sre-api
+          annotations:
+            summary: "High p95 latency for shop-sre-api"
+            description: "p95 latency is above the 300 ms SLO target for 3 minutes."
+
+        - alert: ShopApiPodRestarting
+          expr: |
+            increase(kube_pod_container_status_restarts_total{namespace="sre-prr", container="shop-sre-api"}[10m]) > 0
+          for: 1m
+          labels:
+            severity: critical
+            service: shop-sre-api
+          annotations:
+            summary: "shop-sre-api pod restarted"
+            description: "A container restart was detected in the last 10 minutes."
