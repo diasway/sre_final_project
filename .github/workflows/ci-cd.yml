@@ -34,7 +34,9 @@ jobs:
           pip install -r app/requirements.txt
 
       - name: Run unit tests
-        run: pytest -q
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: python -m pytest -q
 
       - name: Log in to GitHub Container Registry
         if: github.event_name == 'push'
